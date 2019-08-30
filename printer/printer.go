@@ -101,7 +101,7 @@ type Signal interface {
 // ErrUnknownSignal is returned by LookupSignal when a signal cannot be resolved.
 var ErrUnknownSignal = errors.New("unknown signal")
 
-// LookupSignal converts the given raw D-Bus signal with variable body 
+// LookupSignal converts the given raw D-Bus signal with variable body
 // into one with typed structured body or returns ErrUnknownSignal error.
 func LookupSignal(signal *dbus.Signal) (Signal, error) {
 	switch signal.Name {
@@ -130,7 +130,7 @@ func LookupSignal(signal *dbus.Signal) (Signal, error) {
 	}
 }
 
-// AddMatchRule returns AddMatch rule for the given signal. 
+// AddMatchRule returns AddMatch rule for the given signal.
 func AddMatchRule(sig Signal) string {
 	return "type='signal',interface='" + sig.Interface() + "',member='" + sig.Name() + "'"
 }
@@ -180,7 +180,7 @@ func (o *{{ ifaceType $iface }}) {{ propGetType $prop }}(ctx context.Context) ({
 // {{ propSetType $prop }} sets {{ $iface.Name }}.{{ $prop.Name }} property.
 {{- template "annotations" $prop }}
 func (o *{{ ifaceType $iface }}) {{ propSetType $prop }}(ctx context.Context, {{ propArgName $prop }} {{ $prop.Arg.Type }}) error {
-	return o.object.CallWithContext(ctx, "org.freedesktop.DBus.Properties.Set", 0, {{ ifaceNameConst $iface }}, "{{ $prop.Name }}", {{ propArgName $prop }}).Store()
+	return o.object.CallWithContext(ctx, "org.freedesktop.DBus.Properties.Set", 0, {{ ifaceNameConst $iface }}, "{{ $prop.Name }}", dbus.MakeVariant({{ propArgName $prop }})).Store()
 }
 {{- end }}
 {{ end }}
